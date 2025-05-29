@@ -238,9 +238,6 @@ __declspec(dllexport) void C3DGraphics_nativeCreateContext(vm_env* env) {
     print_flush("MAJOR %d\n", ver);
     glGetIntegerv(GL_MINOR_VERSION, &ver);
     print_flush("MINOR %d\n", ver);
-    glClearDepth(1.0f);
-    glDepthMask(GL_TRUE);
-    glDepthFunc(GL_LEQUAL);
     for (int i = 0; i < TEX_SIZE; ++i) {
         texture_names[i] = -1;
     }
@@ -458,6 +455,9 @@ __declspec(dllexport) void C3DGraphics_nativeCallFigure(vm_env* env) {
             struct C3DDTNodeFloat4* node_37 = (struct C3DDTNodeFloat4*)fig->nodes[i];
             glRotatef(node_37->data[3], node_37->data[0], node_37->data[1], node_37->data[2]);
             break;
+        case 0x18:;
+            struct C3DDTNodeFloat4* node_18 = (struct C3DDTNodeFloat4*)fig->nodes[i];
+            break;
         case 0x10:;
         case 0x11:;
             struct C3DDTNodeShape* node_11 = (struct C3DDTNodeShape*)fig->nodes[i];
@@ -573,7 +573,7 @@ __declspec(dllexport) void C3DGraphics_nativeClearStencil(vm_env* env) {
     glClearStencil(x);
 }
 __declspec(dllexport) void C3DGraphics_nativeColor(vm_env* env) { 
-    print_flush("C3DGraphics_nativeColor\n");
+    //print_flush("C3DGraphics_nativeColor\n");
     env->stack_ptr -= 4;
     float x = ntof(env->stack_ptr[1]);
     float y = ntof(env->stack_ptr[2]);
@@ -582,7 +582,7 @@ __declspec(dllexport) void C3DGraphics_nativeColor(vm_env* env) {
     glColor4f(x, y, z, a);
 }
 __declspec(dllexport) void C3DGraphics_nativeColorv(vm_env* env) {
-    print_flush("C3DGraphics_nativeColorv\n");
+    //print_flush("C3DGraphics_nativeColorv\n");
     env->stack_ptr -= 1;
     struct IntArray* x = (struct IntArray*)env->stack_ptr[1];
     float* xa = malloc_s(sizeof(float) * x->length);
@@ -603,7 +603,7 @@ __declspec(dllexport) void C3DGraphics_nativeColorMask(vm_env* env) {
     glColorMask(x, y, z, a);
 }
 __declspec(dllexport) void C3DGraphics_nativeColorMaterial(vm_env* env) {
-    print_flush("C3DGraphics_nativeColorMaterial\n");
+    //print_flush("C3DGraphics_nativeColorMaterial\n");
     env->stack_ptr -= 2;
     int x = get_gl_enum(env->stack_ptr[1]);
     int y = get_gl_enum(env->stack_ptr[2]);
@@ -637,7 +637,7 @@ __declspec(dllexport) void C3DGraphics_nativeDepthFunc(vm_env* env) {
     glDepthFunc(x);
 }
 __declspec(dllexport) void C3DGraphics_nativeDepthMask(vm_env* env) {
-    print_flush("C3DGraphics_nativeDepthMask\n");
+    //print_flush("C3DGraphics_nativeDepthMask\n");
     // TODO: Boolean
     env->stack_ptr -= 1;
     int x = get_gl_enum(env->stack_ptr[1]);
@@ -666,14 +666,18 @@ __declspec(dllexport) void C3DGraphics_nativeFlush(vm_env* env) {
     copy3DContext();
 }
 __declspec(dllexport) void C3DGraphics_nativeFog(vm_env* env) {
-    print_flush("C3DGraphics_nativeFog\n");
     env->stack_ptr -= 2;
     int x = get_gl_enum(env->stack_ptr[1]);
-    float y = ntof(env->stack_ptr[2]);
-    glFogf(x, y);
+    if (x == GL_FOG_MODE) {
+        int y = get_gl_enum(env->stack_ptr[2]);
+        glFogi(x, y);
+    }
+    else {
+        float y = ntof(env->stack_ptr[2]);
+        glFogf(x, y);
+    }
 }
 __declspec(dllexport) void C3DGraphics_nativeFogv(vm_env* env) {
-    print_flush("C3DGraphics_nativeFogv\n");
     env->stack_ptr -= 2;
     int x = get_gl_enum(env->stack_ptr[1]);
     struct IntArray* y = (struct IntArray*)env->stack_ptr[2];
@@ -685,7 +689,7 @@ __declspec(dllexport) void C3DGraphics_nativeFogv(vm_env* env) {
     free(ya);
 }
 __declspec(dllexport) void C3DGraphics_nativeFrontFace(vm_env* env) {
-    print_flush("C3DGraphics_nativeFrontFace\n");
+    //print_flush("C3DGraphics_nativeFrontFace\n");
     env->stack_ptr -= 1;
     int x = get_gl_enum(env->stack_ptr[1]);
     glFrontFace(x);
@@ -724,7 +728,7 @@ __declspec(dllexport) void C3DGraphics_nativeLight(vm_env* env) {
     free(za);
 }
 __declspec(dllexport) void C3DGraphics_nativeLightModeli(vm_env* env) {
-    print_flush("C3DGraphics_nativeLightModeli\n");
+    //print_flush("C3DGraphics_nativeLightModeli\n");
     env->stack_ptr -= 2;
     int x = get_gl_enum(env->stack_ptr[1]);
     int y = get_gl_enum(env->stack_ptr[2]);
@@ -752,7 +756,7 @@ __declspec(dllexport) void C3DGraphics_nativeLookAt(vm_env* env) {
         ntod(env->stack_ptr[7]), ntod(env->stack_ptr[8]), ntod(env->stack_ptr[9]));
 }
 __declspec(dllexport) void C3DGraphics_nativeMaterial(vm_env* env) {
-    print_flush("C3DGraphics_nativeMaterial\n");
+    //print_flush("C3DGraphics_nativeMaterial\n");
     env->stack_ptr -= 3;
     int x = get_gl_enum(env->stack_ptr[1]);
     int y = get_gl_enum(env->stack_ptr[2]);
@@ -790,7 +794,7 @@ __declspec(dllexport) void C3DGraphics_nativeEndList(vm_env* env) {
     glEndList();
 }
 __declspec(dllexport) void C3DGraphics_nativeNormal0(vm_env* env) {
-    print_flush("C3DGraphics_nativeNormal0\n");
+    //print_flush("C3DGraphics_nativeNormal0\n");
     env->stack_ptr -= 3;
     float x = ntof(env->stack_ptr[1]);
     float y = ntof(env->stack_ptr[2]);
@@ -798,7 +802,7 @@ __declspec(dllexport) void C3DGraphics_nativeNormal0(vm_env* env) {
     glNormal3f(x, y, z);
 }
 __declspec(dllexport) void C3DGraphics_nativeNormalv(vm_env* env) {
-    print_flush("C3DGraphics_nativeNormalv\n");
+    //print_flush("C3DGraphics_nativeNormalv\n");
     env->stack_ptr -= 1;
     struct IntArray* x = (struct IntArray*)env->stack_ptr[1];
     float* xa = malloc_s(sizeof(float) * x->length);
@@ -847,11 +851,17 @@ __declspec(dllexport) void C3DGraphics_nativeScissorMethod(vm_env* env) {
     glScissor(x, y, z, a);
 }
 __declspec(dllexport) void C3DGraphics_nativeSphere(vm_env* env) {
-    print_flush("C3DGraphics_nativeSphere\n");
-    GLUquadric* quad;
-    quad = gluNewQuadric();
-    gluSphere(quad, 1, 20, 20);
+    //print_flush("C3DGraphics_nativeSphere\n");
+    GLUquadric* quad = gluNewQuadric();
+    gluQuadricTexture(quad, GLU_TRUE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glRotatef(180, 1, 0, 0);
+    gluSphere(quad, 1.0f, 40, 40);
+    glRotatef(-180, 1, 0, 0);
     gluDeleteQuadric(quad);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 }
 __declspec(dllexport) void C3DGraphics_nativeStencilFunc(vm_env* env) {
     print_flush("C3DGraphics_nativeStencilFunc\n");
@@ -937,7 +947,7 @@ __declspec(dllexport) void C3DGraphics_nativeTexImage2D(vm_env* env) {
     glTexImage2D(target, env->stack_ptr[2], internalFormat, env->stack_ptr[4], env->stack_ptr[5], env->stack_ptr[6], format, type, pixels->data);
 }
 __declspec(dllexport) void C3DGraphics_nativeTexParameter(vm_env* env) {
-    print_flush("C3DGraphics_nativeTexParameter\n");
+    //print_flush("C3DGraphics_nativeTexParameter\n");
     env->stack_ptr -= 3;
     int x = get_gl_enum(env->stack_ptr[1]);
     int y = get_gl_enum(env->stack_ptr[2]);
@@ -968,7 +978,7 @@ __declspec(dllexport) void C3DGraphics_nativeVertex(vm_env* env) {
     glVertex3f(x, y, z);
 }
 __declspec(dllexport) void C3DGraphics_nativeVertexv(vm_env* env) {
-    print_flush("C3DGraphics_nativeVertexv\n");
+    //print_flush("C3DGraphics_nativeVertexv\n");
     env->stack_ptr -= 1;
     struct IntArray* x = (struct IntArray*)env->stack_ptr[1];
     float* xa = malloc_s(sizeof(float) * x->length);

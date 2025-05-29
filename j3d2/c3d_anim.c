@@ -219,6 +219,7 @@ struct C3DData* get_fig(struct C3DFile file) {
             }
             fig->nodes[fig->nb_nodes - 1] = (struct C3DDTNode*)node_36;
             break;
+        case 0x18:
         case 0x37:
             off += 1;
             allocate_new((int**)&fig->nodes, &fig->nb_nodes, &limit_nodes);

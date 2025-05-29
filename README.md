@@ -5,7 +5,9 @@
 This project aims at recreating the `j3d2.dll` to be used with DoJa SDK emulator (3.0 or 3.5),
 which enables Z3D capabilities of the emulator.
 
-Note: doja_g.exe requires `j3d2_g.dll` instead (which can just be the same DLL as `j3d2.dll`)
+Note: `doja_g.exe` requires `j3d2_g.dll` instead (which can just be the same DLL as `j3d2.dll`)
+
+All libraries (`j3d2.dll` AND additional libraries) must be put inside your DoJa emulator `bin` folder (where `doja.exe` is located)
 
 ## Compile
 
@@ -21,7 +23,9 @@ This project uses Mesa 3D x86 dynamic libraries to implement OpenGL: https://mes
 
 You can find pre-compiled DLLs of mesa here: https://github.com/pal1000/mesa-dist-win
 
-(Recommended version: https://github.com/pal1000/mesa-dist-win/releases/tag/25.1.0)
+Recommended version: https://github.com/pal1000/mesa-dist-win/releases/tag/25.1.0
+
+Choose "release msvc" or "release mingw" and copy all files from the x86 folder inside the archive.
 
 ## Credits
 
